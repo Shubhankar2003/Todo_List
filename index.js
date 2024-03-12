@@ -8,7 +8,7 @@ const port = 3000
 
 app.use(cors())
 app.use(express.json())
-app.use('/task', linkRoute)
+app.use('/task', linkRoute) 
 
 setUp()
 

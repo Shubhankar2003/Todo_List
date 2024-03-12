@@ -1,4 +1,4 @@
-import { add_task, list_task, del_task } from "./db"
+import { add_task, list_task, del_task } from "./db.js"
 
 
 export const addTask = (req, res) => {
@@ -34,7 +34,6 @@ export const listTask = (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 export const delTask = (req, res) => {
     try{
