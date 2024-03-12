@@ -1,10 +1,14 @@
 import express from 'express'
 import cors from 'cors'
 import { setUp } from './db.js'
+import linkRoute from './link.js'
 
 const app = express()
-app.use(cors())
 const port = 3000
+
+app.use(cors())
+app.use(express.json())
+app.use('/task', linkRoute)
 
 setUp()
 
