@@ -13,7 +13,7 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
 
 export const add_task = (task, status) => {
     const insert_query = `
-    INSERT INTO Tasks (task, status) values (?, ?)
+    INSERT INTO Tasks (Tasks, Status) values (?, ?)
     `;
     db.run(insert_query, [task, status], function(err) {
         if (err){
@@ -40,19 +40,57 @@ export const list_task = () => {
 }
 
 
-export const del_task = (taskId) =>{
+// export const del_task = (taskId) =>{
+//     const del_query = `
+//     DELETE FROM Tasks WHERE id = ?
+//     `;
+
+//     db.run(del_query, [taskId], function (err){
+//         if (err){
+//             console.log('Error deleting task: ', err);
+//         }else{
+//             console.log(`Task with id ${taskId} deleted successfully`)
+//         }
+//     })
+// }
+
+export const del_task = (taskId) => {
     const del_query = `
-    DELETE FROM Tasks WHERE id = ?
+        DELETE FROM Tasks WHERE id = ?
     `;
 
-    db.run(del_query, [taskId], function (err){
-        if (err){
+    db.run(del_query, [taskId], function (err) {
+        if (err) {
             console.log('Error deleting task: ', err);
-        }else{
-            console.log(`Task with id ${taskId} deleted successfully`)
+        } else {
+            console.log(`Task with id ${taskId} deleted successfully`);
+
+            // After deletion, update the IDs of subsequent tasks
+            const update_query = `
+                UPDATE Tasks SET id = id - 1 WHERE id > ?
+            `;
+            db.run(update_query, [taskId], function (err) {
+                if (err) {
+                    console.log('Error updating IDs:', err);
+                } else {
+                    console.log('IDs updated successfully');
+                }
+            });
+            
+            // Reset auto-increment value of the ID column
+            const reset_query = `
+                DELETE FROM sqlite_sequence WHERE name = 'Tasks'
+            `;
+            db.run(reset_query, function (err) {
+                if (err) {
+                    console.log('Error resetting auto-increment:', err);
+                } else {
+                    console.log('Auto-increment reset successfully');
+                }
+            });
         }
-    })
-}
+    });
+};
 
 
 export const setUp = () => {

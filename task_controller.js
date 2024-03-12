@@ -37,7 +37,7 @@ export const listTask = (req, res) => {
 
 export const delTask = (req, res) => {
     try{
-        const taskId = req.body.taskId
+        const taskId = req.params.taskId
         console.log(taskId)
         if (!taskId) {
             return res.status(400).json({ error: "Task ID is required" });
