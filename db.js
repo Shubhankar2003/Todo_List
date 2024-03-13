@@ -24,11 +24,20 @@ export const add_task = (task, status) => {
     });
 };
 
-export const list_task = (callback) => {
-    const select_query = `
-    SELECT * FROM Tasks
-    `;
-    db.all(select_query, [], callback); // Pass the callback to db.all
+export const list_task = () => {
+    return new Promise((resolve, reject) => {
+        const select_query = `
+        SELECT * FROM Tasks
+        `;
+        db.all(select_query, [], (err, rows) => {
+            if (err){
+                console.error('Error listing tasks:', err);
+                reject(err);
+            }else{
+                resolve(rows);
+            }
+        }); // Pass the callback to db.all
+    });
 }
 
 

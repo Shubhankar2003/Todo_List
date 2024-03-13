@@ -21,23 +21,22 @@ export const addTask = (req, res) => {
 
 export const listTask = (req, res) => {
     try{
-        list_task((err, rows) => {
-            if (err){
-                console.error('Error listing tasks:', err);
-                return res.status(500).json({ error: "Internal server error" });
-            }else{
-                res.status(200).json({ tasks: rows });
-            }
-        })
+        list_task().then((rows) => {
+            res.status(200).json(rows);
+        }).catch((error) => {
+            console.error("Error Listing tasks:", error);
+            res.status(500).json({ error: "Internal server error" });
+        });
     }catch(error){
         console.error("Error Listing tasks:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
 
+
 export const delTask = (req, res) => {
     try{
-        const taskId = req.params.taskId
+        const taskId = req.params.id
         console.log(taskId)
         if (!taskId) {
             return res.status(400).json({ error: "Task ID is required" });
