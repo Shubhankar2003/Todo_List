@@ -24,73 +24,27 @@ export const add_task = (task, status) => {
     });
 };
 
-export const list_task = () => {
+export const list_task = (callback) => {
     const select_query = `
     SELECT * FROM Tasks
     `;
-    db.all(select_query, [], function (err, rows){
-        if (err){
-            console.error('Error listing tasks:', err);
-        }else {
-            rows.forEach(row => {
-                console.log(`Task ID: ${row.id}, Task: ${row.Tasks}, Status: ${row.Status}`);
-            });
-        }
-    })
+    db.all(select_query, [], callback); // Pass the callback to db.all
 }
 
 
-// export const del_task = (taskId) =>{
-//     const del_query = `
-//     DELETE FROM Tasks WHERE id = ?
-//     `;
-
-//     db.run(del_query, [taskId], function (err){
-//         if (err){
-//             console.log('Error deleting task: ', err);
-//         }else{
-//             console.log(`Task with id ${taskId} deleted successfully`)
-//         }
-//     })
-// }
-
-export const del_task = (taskId) => {
+export const del_task = (taskId) =>{
     const del_query = `
-        DELETE FROM Tasks WHERE id = ?
+    DELETE FROM Tasks WHERE id = ?
     `;
 
-    db.run(del_query, [taskId], function (err) {
-        if (err) {
+    db.run(del_query, [taskId], function (err){
+        if (err){
             console.log('Error deleting task: ', err);
-        } else {
-            console.log(`Task with id ${taskId} deleted successfully`);
-
-            // After deletion, update the IDs of subsequent tasks
-            const update_query = `
-                UPDATE Tasks SET id = id - 1 WHERE id > ?
-            `;
-            db.run(update_query, [taskId], function (err) {
-                if (err) {
-                    console.log('Error updating IDs:', err);
-                } else {
-                    console.log('IDs updated successfully');
-                }
-            });
-            
-            // Reset auto-increment value of the ID column
-            const reset_query = `
-                DELETE FROM sqlite_sequence WHERE name = 'Tasks'
-            `;
-            db.run(reset_query, function (err) {
-                if (err) {
-                    console.log('Error resetting auto-increment:', err);
-                } else {
-                    console.log('Auto-increment reset successfully');
-                }
-            });
+        }else{
+            console.log(`Task with id ${taskId} deleted successfully`)
         }
-    });
-};
+    })
+}
 
 
 export const setUp = () => {
@@ -109,5 +63,4 @@ export const setUp = () => {
         }
     })
 }
-
 export const shutDown = () => db.close()
